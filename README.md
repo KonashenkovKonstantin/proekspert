@@ -17,9 +17,9 @@ For example
 
 ## Changes, assumptions and limitations about current implemetation  
 - Ant has been removed by Maven. This change has been confirmed by 'Grete Tammlo'  
-- This programm was written with assumption that until of file isn't finished program doesn't print any info statistics about log file
-- This programm was written with assumption that if log file contains any invalid lines, these lines are ignored
-- This programm was written with limitation of <how much to print of resources with highest average request duration> parameter. This limit is 1000. It's an artificial limitation used for sake of test task.
+- This program was written with assumption that until of file isn't finished program doesn't print any info statistics about log file
+- This program was written with assumption that if log file contains any invalid lines, these lines are ignored
+- This program was written with limitation of <how much to print of resources with highest average request duration> parameter. This limit is 1000. It's an artificial limitation used for sake of test task.
   
   
   
