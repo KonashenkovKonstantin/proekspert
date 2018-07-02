@@ -9,7 +9,7 @@ import com.proekspert.content.LanguageVariables;
 import com.proekspert.services.LogParser;
 
 public class StartPoint {
-	private static final int MAXIMUM_NUMBER_OF_REQUESTS_TO_PRINT = 100;
+	private static final int MAXIMUM_NUMBER_OF_REQUESTS_TO_PRINT = 1000;
 	
 	private static final String COMMAND_HELP = "-h";
 	private static final String COMMAND_PRINT_TOP_REQUESTS = "-p";
