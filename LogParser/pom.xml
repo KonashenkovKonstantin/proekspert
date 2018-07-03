@@ -12,10 +12,15 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
    		<maven.compiler.target>1.8</maven.compiler.target>
+   		<project.build.directory>target</project.build.directory>
+   		
+   		<hamcrest.core.version>1.3</hamcrest.core.version>
+   		<junit.version>4.12</junit.version>
     </properties>
     
   
- 	<build>		
+ 	<build>	
+ 		<directory>${project.build.directory}</directory>	
  		<sourceDirectory>src</sourceDirectory>			
 		<testSourceDirectory>test</testSourceDirectory>
 		
@@ -50,16 +55,16 @@
 		<dependency>
     		<groupId>junit</groupId>
             <artifactId>junit</artifactId>
-    		<version>4.12</version>
+    		<version>${junit.version}</version>
     		<scope>system</scope>
-    		<systemPath>${project.basedir}/lib/junit-4.12.jar</systemPath>
+    		<systemPath>${project.basedir}/lib/junit-${junit.version}.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 		    <artifactId>hamcrest-core</artifactId>
-    		<version>1.3</version>
+    		<version>${hamcrest.core.version}</version>
     		<scope>system</scope>
-    		<systemPath>${project.basedir}/lib/hamcrest-core-1.3.jar</systemPath>
+    		<systemPath>${project.basedir}/lib/hamcrest-core-${hamcrest.core.version}.jar</systemPath>
 		</dependency>
 		
 	</dependencies>

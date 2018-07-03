@@ -5,6 +5,8 @@ public class LanguageVariables {
 	//info
 	public static final String INFO_CLOSE_PROGRAMM_MESSAGE = "The programm terminated";
 	public static final String INFO_DURATION_PROGRAMM_RUNNING = "Programm has been running for %d seconds";
+	public static final String INFO_STARTED_PARSING_LOG_FILE = "Started parsing log file";
+	public static final String INFO_FINISHED_PARSING_LOG_FILE = "Finished parsing log file";
 	public static final String INFO_HELP = "Here is a list of possible commands:\n"
 			+ "'-h' - print help info again,\n"
 			+ "'-p' - print top p requests with highest avareage duration,\n"

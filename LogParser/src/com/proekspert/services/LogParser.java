@@ -44,9 +44,11 @@ public class LogParser implements Runnable {
 	
 	public void run() {
 		try(Scanner scan = new Scanner(new File(filePathString));) {
+			System.out.println(LanguageVariables.INFO_STARTED_PARSING_LOG_FILE);
 			while(scan.hasNext()) {
 				parseLine(scan.nextLine());
 			}
+			System.out.println(LanguageVariables.INFO_FINISHED_PARSING_LOG_FILE);
 		} catch (Exception ee) {			
 			System.out.println(LanguageVariables.ERROR_SMTH_WENT_WRONG);
 			ee.printStackTrace();
