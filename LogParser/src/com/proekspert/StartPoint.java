@@ -53,11 +53,26 @@ public class StartPoint {
 					}
 										
 				} else if (COMMAND_DRAW_HISTOGRAM.equals(command)) {
-					logParser.drawHistogram();
+					if (logParserThread.isAlive()) {
+						System.out.println(LanguageVariables.WARING_STILL_PARSING);
+					} else {
+						logParser.drawHistogram();
+					}
+					
 				} else if (COMMAND_PRINT_TOP_REQUESTS.equals(command)) {
-					logParser.printTopRequest(Integer.parseInt(args[1]));
+					if (logParserThread.isAlive()) {
+						System.out.println(LanguageVariables.WARING_STILL_PARSING);
+					} else {
+						logParser.printTopRequest(Integer.parseInt(args[1]));
+					}					
+					
 				} else if (COMMAND_PRINT_DURATION_PROGAMM_WORKING.equals(command)) {
-					printDurationProgramRun();
+					if (logParserThread.isAlive()) {
+						System.out.println(LanguageVariables.WARING_STILL_PARSING);
+					} else {
+						printDurationProgramRun();
+					}
+					
 				} else {
 					System.out.println(LanguageVariables.ERROR_WRONG_COMMAND);
 				}
