@@ -14,7 +14,7 @@ public class StartPoint {
 	private static final String COMMAND_HELP = "-h";
 	private static final String COMMAND_PRINT_TOP_REQUESTS = "-p";
 	private static final String COMMAND_DRAW_HISTOGRAM = "-d";
-	private static final String COMMAND_PRINT_DURATION_PROGAMM_WORKING = "-s";
+	private static final String COMMAND_PRINT_DURATION_PROGRAM_WORKING = "-s";
 	private static final String COMMAND_QUIT = "-q";
 
 	private static long startTime;
@@ -30,7 +30,8 @@ public class StartPoint {
 		}
 		
 		//2. parse
-		LogParser logParser = new LogParser(args[0]);
+        String logFilePath = args[0];
+		LogParser logParser = new LogParser(logFilePath);
 		Thread logParserThread = new Thread(logParser);
 		logParserThread.start();
 		
@@ -38,13 +39,14 @@ public class StartPoint {
 		//3. ready to handle commands from command line
 		printHelpInfo();
 		
-		try (Scanner scan = new Scanner(System.in);) {
+		try (Scanner scan = new Scanner(System.in)) {
 			while (true) {
 				String command = scan.nextLine().trim();
 				
 				if (COMMAND_QUIT.equals(command)) {
-					System.out.println(LanguageVariables.INFO_CLOSE_PROGRAMM_MESSAGE);
+					System.out.println(LanguageVariables.INFO_CLOSE_PROGRAM_MESSAGE);
 					return;
+
 				} else if (COMMAND_HELP.equals(command)) {
 					if (logParserThread.isAlive()) {
 						System.out.println(LanguageVariables.WARING_STILL_PARSING);
@@ -56,7 +58,7 @@ public class StartPoint {
 					if (logParserThread.isAlive()) {
 						System.out.println(LanguageVariables.WARING_STILL_PARSING);
 					} else {
-						logParser.drawHistogram();
+						logParser.drawHorizontalHistogram();
 					}
 					
 				} else if (COMMAND_PRINT_TOP_REQUESTS.equals(command)) {
@@ -66,7 +68,7 @@ public class StartPoint {
 						logParser.printTopRequest(Integer.parseInt(args[1]));
 					}					
 					
-				} else if (COMMAND_PRINT_DURATION_PROGAMM_WORKING.equals(command)) {
+				} else if (COMMAND_PRINT_DURATION_PROGRAM_WORKING.equals(command)) {
 					if (logParserThread.isAlive()) {
 						System.out.println(LanguageVariables.WARING_STILL_PARSING);
 					} else {
@@ -87,7 +89,7 @@ public class StartPoint {
 				
 	private static void printDurationProgramRun() {
 		long  duration = System.currentTimeMillis() - startTime;
-		System.out.println(String.format(LanguageVariables.INFO_DURATION_PROGRAMM_RUNNING, duration));
+		System.out.println(String.format(LanguageVariables.INFO_DURATION_PROGRAM_RUNNING, duration));
 		
 	}
 
@@ -97,13 +99,11 @@ public class StartPoint {
 	}
 
 	private static void printErrors(List<String> errors) {
-		for (String error : errors) {
-			System.out.println(error);
-		}
+        errors.forEach(System.out::println);
 	}
 	
 	private static List<String> validateArguments(String args[]) {
-		List<String> errors = new ArrayList<String>(); 
+		List<String> errors = new ArrayList<>();
 		if (args.length != 2) {
 			errors.add(LanguageVariables.ERROR_NO_ENOUGH_PARAMETERS);
 			return errors;
@@ -121,20 +121,15 @@ public class StartPoint {
 	
 	private static boolean isFileExist(String filePathString) {
 		File f = new File(filePathString);
-		if(f.exists() && !f.isDirectory()) { 
-		    return true;
-		} else {
-			return false;
-		}
+        return (f.exists() && !f.isDirectory()) ? true : false;
 	}
 	
 	private static boolean isTopNumberRequestCorrect(String stringNumber) {
 		try {
 			int intNumber = Integer.parseInt(stringNumber);
-			if (intNumber < 0 || intNumber > MAXIMUM_NUMBER_OF_REQUESTS_TO_PRINT) {
-				return false;
-			}
-			return true;
+
+            return (intNumber < 0 || intNumber > MAXIMUM_NUMBER_OF_REQUESTS_TO_PRINT) ? false : true;
+
 		} catch (Exception e) {
 			return false;
 		}

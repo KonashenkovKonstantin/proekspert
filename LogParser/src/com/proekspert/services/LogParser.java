@@ -15,35 +15,34 @@ import com.proekspert.content.LanguageVariables;
 import com.proekspert.utils.LogParserUtils;
 
 public class LogParser implements Runnable {
-	
-	//temporary structures
-	int minNumberOfRequestByHour = 0;
-	int maxNumberOfRequestByHour = 0;
-	private Map<String, NumberRequestCallsByHour> numberRequestCallsByHourMap = new HashMap<>();
-	private Map<String, ResourceInfo> uniqueResourceVsDetailedInfoMap = new HashMap<>();	
-	
-	//final result structures
+
+	private int maxNumberOfRequestByHour = 0;
 	private List<ResourceInfo> resourcesByCallDuration;
 	private List<NumberRequestCallsByHour> numberRequestCallsByHour;
 	
-	
-	private static final Pattern LINE_IN_LOG = 
+    //temporary structures
+    private Map<String, NumberRequestCallsByHour> tmpNumberRequestCallsByHourMap = new HashMap<>();
+    private Map<String, ResourceInfo> tmpUniqueResourceVsDetailedInfoMap = new HashMap<>();
+
+	private static final Pattern LINE_IN_LOG =
 			Pattern.compile("^\\d\\d\\d\\d-\\d\\d-\\d\\d\\s+" 	//date
 					+ "\\d\\d:\\d\\d:\\d\\d,\\d\\d\\d\\s+" 		//time
 					+ "\\(.*\\)\\s+"							//thread-id (in brackets)
-					+ ".* in " 									//URI + query string, query may contain spaces => 
+					+ ".* in " 									//URI + query string, query may contain spaces =>
 																//we go through all possible characters till ' in'
 					+ "\\d+"									//duration
 					+ "$");
-	
+
 	private String filePathString;
-	
+
 	public LogParser(String filePathString) {
 		this.filePathString = filePathString;
 	}
-	
+
 	public void run() {
-		try(Scanner scan = new Scanner(new File(filePathString));) {
+
+
+        try(Scanner scan = new Scanner(new File(filePathString))) {
 			System.out.println(LanguageVariables.INFO_STARTED_PARSING_LOG_FILE);
 			while(scan.hasNext()) {
 				parseLine(scan.nextLine());
@@ -55,14 +54,13 @@ public class LogParser implements Runnable {
 		}
 		
 		//2. count average => make new list of resource etc
-		resourcesByCallDuration =  new ArrayList<>(uniqueResourceVsDetailedInfoMap.values());
-		for (ResourceInfo resourceInfo : resourcesByCallDuration) {
-			resourceInfo.countAverageDuration();
-		}
+		resourcesByCallDuration =  new ArrayList<>(tmpUniqueResourceVsDetailedInfoMap.values());
+        resourcesByCallDuration.forEach(com.proekspert.beans.ResourceInfo::countAverageDuration);
 		Collections.sort(resourcesByCallDuration, Collections.reverseOrder());
 		
-		//3. do smth with number resources by hours
-		numberRequestCallsByHour = new ArrayList<>(numberRequestCallsByHourMap.values());
+		//3. now we have unsorted list of dateHour-RequestCounter
+        //=> we sort it
+		numberRequestCallsByHour = new ArrayList<>(tmpNumberRequestCallsByHourMap.values());
 		Collections.sort(numberRequestCallsByHour);
 	}
 
@@ -72,8 +70,8 @@ public class LogParser implements Runnable {
 		}
 		
 		//1. split line and get
-		String dateTime = LogParserUtils.getDateTimestamp(line);
-		countRequest(dateTime);
+		String dateAndHour = LogParserUtils.getDateAndHour(line);
+		countRequest(dateAndHour);
 		
 		//2. getUniqueResource + duration of request
 		String resourceName = LogParserUtils.getResourceName(line);	
@@ -87,13 +85,13 @@ public class LogParser implements Runnable {
 		int counter = 0;
 		while (counter < resourcesByCallDuration.size() && counter < number) {			
 			ResourceInfo resourceInfo = resourcesByCallDuration.get(counter);
-			System.out.println("Average duration (miliseconds): " + resourceInfo.getAvarageCallDuration() + ", resource name: '" + resourceInfo.getResourceName() +"'");
+			System.out.println("Average duration (milliseconds): " + resourceInfo.getAverageCallDuration() + ", resource name: '" + resourceInfo.getResourceName() +"'");
 			
 			counter++;
 		}
 	}	
 	
-	public void drawHistogram() {
+	public void drawHorizontalHistogram() {
 		if (numberRequestCallsByHour.isEmpty()) {
 			System.out.println(LanguageVariables.WARING_THERE_IS_NO_DATA);
 			return;
@@ -110,28 +108,28 @@ public class LogParser implements Runnable {
 		for (int i = 1; i < 9; i++) {
 			builder.append("|....");			
 		}
-		builder.append("|.... " + maxNumberOfRequestByHour + "  requests\n");
+		builder.append("|.... ").append(maxNumberOfRequestByHour).append("  requests\n");
 		return builder.toString();
 	}
 	
 	private String getBodyOfHistogram() {
 		StringBuilder builder = new StringBuilder();
 		for (NumberRequestCallsByHour byHour : numberRequestCallsByHour) {			
-			builder.append("  " + byHour.getDateTime() + "|");
+			builder.append("  ").append(byHour.getDateAndHour()).append("|");
 			
-			int percantage =(int)((double) byHour.getRequestsCounter() / maxNumberOfRequestByHour *50);
-			for (int i = 0; i < percantage; i++) {
+			int percentage =(int)((double) byHour.getRequestsCounter() / maxNumberOfRequestByHour *50);
+			for (int i = 0; i < percentage; i++) {
 				builder.append("-");
 			}			
-			builder.append(byHour.getRequestsCounter() + " requests\n");
+			builder.append(byHour.getRequestsCounter()).append(" requests\n");
 		}		
 		return builder.toString();
 	}
 	
-	private void countRequest(String dateTime) {
-		NumberRequestCallsByHour numberRequestCallsByHour = numberRequestCallsByHourMap.get(dateTime);		
+	private void countRequest(String dateAndHour) {
+		NumberRequestCallsByHour numberRequestCallsByHour = tmpNumberRequestCallsByHourMap.get(dateAndHour);
 		if(numberRequestCallsByHour == null) {
-			numberRequestCallsByHourMap.put(dateTime, new NumberRequestCallsByHour(dateTime, 1));
+			tmpNumberRequestCallsByHourMap.put(dateAndHour, new NumberRequestCallsByHour(dateAndHour, 1));
 		} else {
 			numberRequestCallsByHour.addOneMoreCall();
 			if (maxNumberOfRequestByHour < numberRequestCallsByHour.getRequestsCounter()) {
@@ -141,10 +139,10 @@ public class LogParser implements Runnable {
 	}
 	
 	private void countResource(String resourceName, int durationCall) {
-		ResourceInfo resourceInfo = uniqueResourceVsDetailedInfoMap.get(resourceName);
+		ResourceInfo resourceInfo = tmpUniqueResourceVsDetailedInfoMap.get(resourceName);
 		
 		if (resourceInfo == null) {
-			uniqueResourceVsDetailedInfoMap.put(resourceName, new ResourceInfo(resourceName, 1, durationCall));
+			tmpUniqueResourceVsDetailedInfoMap.put(resourceName, new ResourceInfo(resourceName, 1, durationCall));
 		} else {
 			resourceInfo.addOneMoreCall(durationCall);
 		}

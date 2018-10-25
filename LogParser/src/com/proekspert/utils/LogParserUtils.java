@@ -42,7 +42,7 @@ public class LogParserUtils {
 	}
 
 	
-	public static String getDateTimestamp(String line) {
+	public static String getDateAndHour(String line) {
 		return line.substring(0, 13);
 	}
 

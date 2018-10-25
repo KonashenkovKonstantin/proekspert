@@ -1,11 +1,15 @@
 package com.proekspert.beans;
 
 public class NumberRequestCallsByHour implements Comparable<NumberRequestCallsByHour> {
-	private String dateTime;
+	private String dateAndHour;
 	private int requestsCounter;
-	
-	public NumberRequestCallsByHour(String dateTime, int requestsCounter) {
-		this.dateTime = dateTime;
+
+    public String getDateAndHour() {
+        return dateAndHour;
+    }
+
+    public NumberRequestCallsByHour(String dateAndHour, int requestsCounter) {
+		this.dateAndHour = dateAndHour;
 		this.requestsCounter = requestsCounter;
 	}
 	
@@ -13,20 +17,10 @@ public class NumberRequestCallsByHour implements Comparable<NumberRequestCallsBy
 		requestsCounter++;
 	}
 
-	public String getDateTime() {
-		return dateTime;
-	}
 
-	public void setDateTime(String dateTime) {
-		this.dateTime = dateTime;
-	}
 
 	public int getRequestsCounter() {
 		return requestsCounter;
-	}
-
-	public void setRequestsCounter(int requestsCounter) {
-		this.requestsCounter = requestsCounter;
 	}
 
 	@Override
@@ -34,7 +28,7 @@ public class NumberRequestCallsByHour implements Comparable<NumberRequestCallsBy
 		if (o== null) {
 			return 1;
 		} else {
-			return this.dateTime.compareTo(o.dateTime);
+			return this.getDateAndHour().compareTo(o.dateAndHour);
 		}
 	}
 }

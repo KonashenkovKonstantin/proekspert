@@ -6,21 +6,30 @@ public class ResourceInfo implements Comparable<ResourceInfo> {
 	
 	private String resourceName;
 	private int resourceCallCounter;
+	private int averageDuration;
+
 	private BigInteger resourceCallDurationCounter = new BigInteger("0");
 	private long tmpResourceCallDurationCounter = 0;
-	private int averageDuration;
 
 	public ResourceInfo(String resourceName, int resourceCallCounter, int resourceCallDurationCounter) {
 		this.resourceName = resourceName;
 		this.resourceCallCounter = resourceCallCounter;
 		this.tmpResourceCallDurationCounter = resourceCallDurationCounter;
 	}
-	
+
+    /**
+     * We can get overflow, so we have two counters
+     * - the first is long. Temporary counter for quick sorting
+     * - the second is BigInteger to keep number that can be more that long
+     * When we detect overflow we just move current long to the BigInteger
+     * @param callDuration
+     */
 	public void addOneMoreCall(int callDuration) {
 		resourceCallCounter++;
 		
 		//checking for overflow
-		if (tmpResourceCallDurationCounter + callDuration < 0) {
+        boolean overFlowDetected = tmpResourceCallDurationCounter + callDuration < 0;
+        if (overFlowDetected) {
 			resourceCallDurationCounter = resourceCallDurationCounter.add(new BigInteger(String.valueOf(resourceCallDurationCounter)));
 			tmpResourceCallDurationCounter = callDuration;
 		} else {
@@ -33,32 +42,12 @@ public class ResourceInfo implements Comparable<ResourceInfo> {
 		averageDuration = resourceCallDurationCounter.divide(new BigInteger(String.valueOf(resourceCallCounter))).intValue();		
 	}
 	
-	public int getAvarageCallDuration() {		
+	public int getAverageCallDuration() {
 		return averageDuration; 
-	}
-
-	public int getResourceCallCounter() {
-		return resourceCallCounter;
-	}
-
-	public void setResourceCallCounter(int resourceCallCounter) {
-		this.resourceCallCounter = resourceCallCounter;
-	}
-
-	public long getResourceCallDurationCounter() {
-		return tmpResourceCallDurationCounter;
-	}
-
-	public void setResourceCallDurationCounter(int resourceCallDurationCounter) {
-		this.tmpResourceCallDurationCounter = resourceCallDurationCounter;
 	}
 
 	public String getResourceName() {
 		return resourceName;
-	}
-
-	public void setResourceName(String resourceName) {
-		this.resourceName = resourceName;
 	}
 
 	@Override

@@ -65,8 +65,8 @@ public class LogParserUtilsTest {
 		String test1 = "2015-08-19 00:00:01,049 (http--0.0.0.0-28080-405) [] /checkSession.do in 187";
 		String test2 = "2015-08-19 00:00:01,963 (http--0.0.0.0-28080-245) [] /checkSession.do in 113";
 		
-		assertEquals("2015-08-19 00", LogParserUtils.getDateTimestamp(test1));
-		assertEquals("2015-08-19 00", LogParserUtils.getDateTimestamp(test2));
+		assertEquals("2015-08-19 00", LogParserUtils.getDateAndHour(test1));
+		assertEquals("2015-08-19 00", LogParserUtils.getDateAndHour(test2));
 	}
 
 }

@@ -3,19 +3,19 @@ package com.proekspert.content;
 public class LanguageVariables {
 
 	//info
-	public static final String INFO_CLOSE_PROGRAMM_MESSAGE = "The programm terminated";
-	public static final String INFO_DURATION_PROGRAMM_RUNNING = "Programm has been running for %d seconds";
+	public static final String INFO_CLOSE_PROGRAM_MESSAGE = "The program terminated";
+	public static final String INFO_DURATION_PROGRAM_RUNNING = "The program has been running for %d seconds";
 	public static final String INFO_STARTED_PARSING_LOG_FILE = "Started parsing log file";
 	public static final String INFO_FINISHED_PARSING_LOG_FILE = "Finished parsing log file";
 	public static final String INFO_HELP = "Here is a list of possible commands:\n"
 			+ "'-h' - print help info again,\n"
-			+ "'-p' - print top p requests with highest avareage duration,\n"
-			+ "'-d' - draw histogram of hourly number of requestsuration,\n"
+			+ "'-p' - print top p requests with highest average duration,\n"
+			+ "'-d' - draw histogram of hourly number of request duration,\n"
 			+ "'-s' - print out number of (milli)seconds this program run,\n"
-			+ "'-q' - quit programm.\n";
+			+ "'-q' - quit the program.\n";
 	
 	//warnings
-	public static String WARING_STILL_PARSING = "The programm is still parsing log file";
+	public static String WARING_STILL_PARSING = "The program is still parsing log file";
 	public static String WARING_THERE_IS_NO_DATA = "There is no data yet";
 	
 	//errors
